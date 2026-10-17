@@ -7312,9 +7312,24 @@ resynctoplanet:
                         goto endmain;
                     }
                 } else if (graphics_menu_status == 3) {
-                    if (mc == 72 || mc == 80) {
+                    if (mc == 72) {
                         const bool inv = noctis::toggle_mouse_inversion();
                         status(inv ? "MOUSE PITCH: INVERTED" : "MOUSE PITCH: NORMAL", 50);
+                        noctis::save_controls_settings(noctis::runtime_paths().config_dir);
+                        noctis::play_cockpit_button();
+                        goto endmain;
+                    }
+                    if (mc == 80) {
+                        // Down keeps its three-stop mouselook cycle convention
+                        // even inside the controls page; Up remains the pitch
+                        // toggle.
+                        const auto cyc = noctis::cycle_mouse_look(option_mouse_look, noctis::is_mouse_inversion_active());
+                        option_mouse_look = cyc.mode;
+                        noctis::set_mouse_inversion(cyc.invert_pitch);
+                        status(cyc.mode == 0   ? "MOUSELOOK OFF"
+                               : !cyc.invert_pitch ? "MOUSELOOK ON"
+                                                   : "MOUSELOOK INV.",
+                               50);
                         noctis::save_controls_settings(noctis::runtime_paths().config_dir);
                         noctis::play_cockpit_button();
                         goto endmain;
