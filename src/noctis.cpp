@@ -4970,6 +4970,9 @@ void loop() {
             terminal.command[0] = 0;
             status("CANCELLED", 50);
         }
+        // A consumed cancel must also disarm the ESC key queued for the
+        // legacy handlers, or main() reads mc == 27 and ends the session.
+        noctis::discard_queued_cancel();
     }
 
     // Dev Bryce: Mouse Currently only rotates camera

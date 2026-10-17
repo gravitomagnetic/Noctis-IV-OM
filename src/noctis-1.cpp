@@ -4736,6 +4736,7 @@ nosecondarysun:
             } else if (about != 0) {
                 about = 0;
             }
+            noctis::discard_queued_cancel();
         }
 
         /*if (mpul & 2) {
