@@ -36,11 +36,12 @@ struct MouseControlDelta {
 };
 
 MouseControlDelta space_mouse_control(std::int8_t mode, bool right_button, std::int16_t dx,
-                                      std::int16_t dy, float user_pitch);
+                                      std::int16_t dy, float user_pitch,
+                                      bool pitch_inverted = false);
 // dy arrives pre-inverted by the input adapter (push forward -> positive) when
-// pitch_inverted is false. The landed walking branch restores the raw DOS axis
-// convention (mouse up = forward) independently of the camera pitch flag, so
-// one setting no longer couples look and walk.
+// pitch_inverted is false. The walking branches of BOTH handlers restore the raw
+// DOS axis convention (mouse up = forward) independently of the camera pitch
+// flag, so one setting no longer couples look and walk.
 MouseControlDelta surface_mouse_control(std::int8_t mode, bool right_button, bool left_button,
                                         std::int16_t dx, std::int16_t dy, bool landed,
                                         std::uint8_t movement_scale,

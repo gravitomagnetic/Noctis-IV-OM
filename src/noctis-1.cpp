@@ -6260,10 +6260,11 @@ nosecondarysun:
                         continue;
                     }
                     if (w == 'm' || w == 'M') {
-                        const auto cyc = noctis::cycle_mouse_look(option_mouse_look, noctis::is_mouse_inversion_active());
-                        option_mouse_look = cyc.mode;
-                        noctis::set_mouse_inversion(cyc.invert_pitch);
-                        status(cyc.mode == 0 ? "MOUSELOOK DISABLED" : !cyc.invert_pitch ? "MOUSELOOK ENABLED" : "MOUSELOOK INV.", 50);
+                        // M is a plain mouselook on/off toggle; the three-stop
+                        // cycle (including the inverted-pitch stop) belongs to
+                        // the Down arrow alone.
+                        option_mouse_look = option_mouse_look == 0 ? 1 : 0;
+                        status(option_mouse_look == 0 ? "MOUSELOOK DISABLED" : "MOUSELOOK ENABLED", 50);
                         noctis::save_controls_settings(noctis::runtime_paths().config_dir);
                         noctis::play_cockpit_button();
                         continue;

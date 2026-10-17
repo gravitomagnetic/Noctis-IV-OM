@@ -40,12 +40,18 @@ int main() {
                       && noctis::cycle_mouse_look(1, false).mode == 1 && noctis::cycle_mouse_look(1, false).invert_pitch
                       && noctis::cycle_mouse_look(1, true).mode == 0 && !noctis::cycle_mouse_look(1, true).invert_pitch,
                   "mouselook three-stop cycle over two orthogonal settings changed");
-    const auto space_move = noctis::space_mouse_control(0, false, 6, 4, 12);
-    const auto space_look = noctis::space_mouse_control(1, false, 6, 4, 12);
-    ok &= require(space_move.step == -12 && space_move.yaw == -2 && space_move.pitch == 0,
+    const auto space_move = noctis::space_mouse_control(0, false, 6, 4, 12, false);
+    const auto space_look = noctis::space_mouse_control(1, false, 6, 4, 12, false);
+    ok &= require(space_move.step == 12 && space_move.yaw == -2 && space_move.pitch == 0,
                   "space movement-mode mouse mapping changed");
     ok &= require(space_look.step == 0 && space_look.yaw == -2 && space_look.pitch == -0.5F,
                   "space mouselook pitch mapping changed");
+    // Gesture parity: a forward push (raw-negative) walks forward under EITHER
+    // pitch setting; the pitch flag never changes walking direction.
+    ok &= require(noctis::space_mouse_control(0, false, 0, -4, 12, true).step == 12
+                      && noctis::surface_mouse_control(0, false, false, 0, -4, true, 5, true).step == 20
+                      && noctis::surface_mouse_control(0, false, false, 0, 4, true, 5, false).step == 20,
+                  "walking direction coupled to mouse pitch setting");
     const auto surface_move = noctis::surface_mouse_control(0, false, true, 6, 4, true, 5);
     const auto surface_look = noctis::surface_mouse_control(1, false, true, 6, 4, true, 5);
     ok &= require(surface_move.step == 95 && surface_move.yaw == -1 && surface_move.pitch == 0,

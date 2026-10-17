@@ -38,14 +38,17 @@ MouseLookCycle cycle_mouse_look(std::int8_t mode, bool pitch_inverted) {
 }
 
 MouseControlDelta space_mouse_control(std::int8_t mode, bool right_button, std::int16_t dx,
-                                      std::int16_t dy, float user_pitch) {
+                                      std::int16_t dy, float user_pitch, bool pitch_inverted) {
     MouseControlDelta result;
+    // Undo the adapter's global Y inversion for walking only, mirroring the
+    // surface handler: forward means forward at any pitch setting.
+    const float dy_raw = pitch_inverted ? static_cast<float>(dy) : -static_cast<float>(dy);
     if (right_button) {
         result.shift = 3.0F * dx;
         if (mode == 0) {
             result.pitch = -static_cast<float>(dy) / 8.0F;
         } else {
-            result.step = -3.0F * dy;
+            result.step = -3.0F * dy_raw;
             if (dy > 7 || dy < -7) result.pitch = -user_pitch / 6.0F;
         }
     } else {
@@ -53,7 +56,7 @@ MouseControlDelta space_mouse_control(std::int8_t mode, bool right_button, std::
         // push looks up. (Mode 2 folded into mode 1 + pitch inversion.)
         if (mode == 1) result.pitch = -static_cast<float>(dy) / 8.0F;
         else {
-            result.step = -3.0F * dy;
+            result.step = -3.0F * dy_raw;
             if (dy > 7 || dy < -7) result.pitch = -user_pitch / 6.0F;
         }
         result.yaw = -static_cast<float>(dx) / 3.0F;

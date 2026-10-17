@@ -4988,7 +4988,8 @@ void loop() {
     }*/
 
     const auto mouse_control =
-        noctis::space_mouse_control(option_mouse_look, (mpul & 2U) != 0, mdltx, mdlty, user_alfa);
+        noctis::space_mouse_control(option_mouse_look, (mpul & 2U) != 0, mdltx, mdlty, user_alfa,
+                                    noctis::is_mouse_inversion_active());
     shift += mouse_control.shift;
     step += mouse_control.step;
     dlt_alfa += mouse_control.pitch;
@@ -7178,10 +7179,10 @@ resynctoplanet:
                     noctis::save_controls_settings(noctis::runtime_paths().config_dir);
                     noctis::play_cockpit_button();
                 } else if (mc == 'm' || mc == 'M') {
-                    const auto cyc = noctis::cycle_mouse_look(option_mouse_look, noctis::is_mouse_inversion_active());
-                    option_mouse_look = cyc.mode;
-                    noctis::set_mouse_inversion(cyc.invert_pitch);
-                    status(cyc.mode == 0 ? "MOUSELOOK OFF" : !cyc.invert_pitch ? "MOUSELOOK ON" : "MOUSELOOK INV.", 50);
+                    // Plain on/off toggle; the menu page itself shows the
+                    // MOUSELOOK state, so no status popup (menu-context
+                    // popups persist while the menu holds the screen).
+                    option_mouse_look = option_mouse_look == 0 ? 1 : 0;
                     noctis::save_controls_settings(noctis::runtime_paths().config_dir);
                     noctis::play_cockpit_button();
                 } else if (mc == 'r' || mc == 'R') {
@@ -7602,10 +7603,8 @@ resynctoplanet:
                         goto endmain;
                     }
                     if (mc == 'm' || mc == 'M') {
-                        const auto cyc = noctis::cycle_mouse_look(option_mouse_look, noctis::is_mouse_inversion_active());
-                        option_mouse_look = cyc.mode;
-                        noctis::set_mouse_inversion(cyc.invert_pitch);
-                        status(cyc.mode == 0 ? "MOUSELOOK OFF" : !cyc.invert_pitch ? "MOUSELOOK ON" : "MOUSELOOK INV.", 50);
+                        // Plain on/off toggle; the menu page shows the state.
+                        option_mouse_look = option_mouse_look == 0 ? 1 : 0;
                         noctis::save_controls_settings(noctis::runtime_paths().config_dir);
                         noctis::play_cockpit_button();
                         goto endmain;
